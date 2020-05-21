@@ -122,14 +122,22 @@ ball.rect.y = ballStartPosY
 # Attempt to have all of the bricks in a list, rather than each one as an individual object
 brickObjects = []
 
-for x in range(10):
+for x in range(24):
     brickObjects.append(Brick())
 
 brickCounter = 0
+heightMultiplier = 1
+brickWidthPadding = 75;
 
 for brick in brickObjects:
-    brick.rect.x = 100 + (brickCounter * (brickWidth + 10))
-    brick.rect.y = 100
+    brick.rect.x = brickWidthPadding + (brickCounter * (brickWidth + 10))
+
+    if brick.rect.x >= windowWidth - brickWidth:
+        heightMultiplier += 1
+        brickCounter = 0
+        brick.rect.x = brickWidthPadding
+
+    brick.rect.y = 100 * heightMultiplier
     bricks.add(brick)
     brickCounter += 1
     print("Brick: " + str(brickCounter))
