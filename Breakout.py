@@ -109,9 +109,6 @@ all_sprites_list.add(paddle)
 all_sprites_list.add(ball)
 
 bricks = pygame.sprite.Group()
-# bricks.add(brick1)
-# bricks.add(brick2)
-# bricks.add(brick3)
 
 paddle.rect.x = paddleStartingPositionX
 paddle.rect.y = paddleStartingPositionY
@@ -126,7 +123,11 @@ for x in range(24):
     brickObjects.append(Brick())
 
 brickCounter = 0
+
+#Determines the row
 heightMultiplier = 1
+
+#Space between the left window edge and the bricks
 brickWidthPadding = 75;
 
 for brick in brickObjects:
