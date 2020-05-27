@@ -6,9 +6,9 @@ pygame.init()
 windowWidth = 1000
 windowHeight = 600
 ballStartPosX = int(windowWidth / 2)
-ballStartPosY = 350
-ballWidth = 15
-ballHeight = 15
+ballStartPosY = 400
+ballWidth = 10
+ballHeight = 10
 brickWidth = 100
 brickHeight = 50
 white = (255, 255, 255)
@@ -22,7 +22,7 @@ paddleVelocity = 5
 upperBoundY = 50
 
 paddleStartingPositionX = int((windowWidth - paddleWidth) / 2)
-paddleStartingPositionY = 500
+paddleStartingPositionY = 550
 
 screen = pygame.display.set_mode((windowWidth, windowHeight))
 pygame.display.set_caption("Breakout")
@@ -66,7 +66,7 @@ class Ball(pygame.sprite.Sprite):
         pygame.draw.rect(self.image, green, (0, 0, ballWidth, ballHeight))
 
         self.rect = self.image.get_rect()
-        self.velocity = [randint(-4, 4), randint(-4, -2)]
+        self.velocity = [0,0]
 
     def update(self):
         self.rect.x += self.velocity[0]
@@ -78,7 +78,7 @@ class Ball(pygame.sprite.Sprite):
     def respawn(self):
         self.rect.x = ballStartPosX
         self.rect.y = ballStartPosY
-        self.setVelocity(-6, -2)
+        self.setVelocity(-2, 2)
 
     def setVelocity(self, lowerBound, upperBound):
         self.velocity = [randint(lowerBound, upperBound), randint(lowerBound, upperBound)]
@@ -96,6 +96,9 @@ class Ball(pygame.sprite.Sprite):
                 self.velocity[0] = -2
             else:
                 self.velocity[0] = 2
+
+
+
 
 
 paddle = Paddle()
@@ -159,6 +162,8 @@ while (active):
         paddle.moveRight()
     if keys[pygame.K_LEFT] and paddle.rect.x > 0:
         paddle.moveLeft()
+    if keys[pygame.K_SPACE] and ball.velocity[0] == 0 and ball.velocity[1] == 0:
+        ball.respawn()
 
     # COLLISION
     if pygame.sprite.collide_rect(ball, paddle):
@@ -180,6 +185,9 @@ while (active):
 
     if ball.rect.x <= 0 or ball.rect.x >= (windowWidth - ballWidth):
         ball.velocity[0] = -ball.velocity[0]
+
+    if ball.rect.y >= (windowHeight-ballHeight):
+        ball.respawn()
 
     pygame.display.flip()
     clock.tick(60)
