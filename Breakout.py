@@ -3,6 +3,7 @@ from random import randint
 
 pygame.init()
 
+level = 1
 windowWidth = 1000
 windowHeight = 600
 ballStartPosX = int(windowWidth / 2)
@@ -16,10 +17,12 @@ black = (0, 0, 0)
 red = (255, 0, 0)
 green = (0, 255, 0)
 blue = (0, 0, 255)
+brickColor = white
 paddleWidth = 200
 paddleHeight = 25
 paddleVelocity = 5
 upperBoundY = 50
+brickHitCounter = 0
 
 paddleStartingPositionX = int((windowWidth - paddleWidth) / 2)
 paddleStartingPositionY = 550
@@ -34,10 +37,38 @@ class Brick(pygame.sprite.Sprite):
     def __init__(self):
         super(Brick, self).__init__()
         self.image = pygame.Surface((brickWidth, brickHeight))
-        self.image.fill(white)
-        pygame.draw.rect(self.image, white, (brickWidth, brickHeight, 0, 0))
+        self.image.fill(brickColor)
+        pygame.draw.rect(self.image, brickColor, (brickWidth, brickHeight, 0, 0))
 
         self.rect = self.image.get_rect()
+
+    def spawnBricks(self):
+        # Attempt to have all of the bricks in a list, rather than each one as an individual object
+        brickObjects = []
+
+        for x in range(24):
+            brickObjects.append(Brick())
+
+        brickCounter = 0
+
+        # Determines the row
+        heightMultiplier = 1
+
+        # Space between the left window edge and the bricks
+        brickWidthPadding = 75;
+
+        for brick in brickObjects:
+            brick.rect.x = brickWidthPadding + (brickCounter * (brickWidth + 10))
+
+            if brick.rect.x >= windowWidth - brickWidth:
+                heightMultiplier += 1
+                brickCounter = 0
+                brick.rect.x = brickWidthPadding
+
+            brick.rect.y = 100 * heightMultiplier
+            bricks.add(brick)
+            brickCounter += 1
+            print("Brick: " + str(brickCounter))
 
 
 class Paddle(pygame.sprite.Sprite):
@@ -101,6 +132,8 @@ class Ball(pygame.sprite.Sprite):
 
 
 
+
+
 paddle = Paddle()
 brick1 = Brick()
 brick2 = Brick()
@@ -119,32 +152,7 @@ paddle.rect.y = paddleStartingPositionY
 ball.rect.x = ballStartPosX
 ball.rect.y = ballStartPosY
 
-# Attempt to have all of the bricks in a list, rather than each one as an individual object
-brickObjects = []
-
-for x in range(24):
-    brickObjects.append(Brick())
-
-brickCounter = 0
-
-#Determines the row
-heightMultiplier = 1
-
-#Space between the left window edge and the bricks
-brickWidthPadding = 75;
-
-for brick in brickObjects:
-    brick.rect.x = brickWidthPadding + (brickCounter * (brickWidth + 10))
-
-    if brick.rect.x >= windowWidth - brickWidth:
-        heightMultiplier += 1
-        brickCounter = 0
-        brick.rect.x = brickWidthPadding
-
-    brick.rect.y = 100 * heightMultiplier
-    bricks.add(brick)
-    brickCounter += 1
-    print("Brick: " + str(brickCounter))
+Brick.spawnBricks(Brick)
 
 # GAME LOOP
 active = True
@@ -171,6 +179,18 @@ while (active):
 
     if pygame.sprite.spritecollide(ball, bricks, True):
         ball.bounce()
+        brickHitCounter+=1
+
+        if brickHitCounter % 24 == 0:
+            level += 1
+            if level == 2:
+                brickColor = red
+            elif level == 3:
+                brickColor == blue
+            else:
+                brickColor = green
+
+            Brick.spawnBricks(Brick)
 
     # DRAW AND UPDATE
     pygame.draw.line(screen, white, (0, upperBoundY), (windowWidth, upperBoundY), 5)
