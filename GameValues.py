@@ -1,0 +1,26 @@
+level = 1
+windowWidth = 1000
+windowHeight = 600
+ballStartPosX = int(windowWidth / 2)
+ballStartPosY = 400
+ballWidth = 10
+ballHeight = 10
+brickWidth = 100
+brickHeight = 50
+white = (255, 255, 255)
+black = (0, 0, 0)
+red = (255, 0, 0)
+green = (0, 255, 0)
+blue = (0, 0, 255)
+yellow = (255, 255, 0)
+brickColor = white
+paddleWidth = 200
+paddleHeight = 25
+paddleVelocity = 5
+upperBoundY = 50
+brickHitCounter = 0
+score = 0
+lives = 10
+
+paddleStartingPositionX = int((windowWidth - paddleWidth) / 2)
+paddleStartingPositionY = 550

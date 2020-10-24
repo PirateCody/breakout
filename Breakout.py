@@ -1,33 +1,15 @@
+import random
+
 import pygame
-from random import randint
+
+import GameValues as gv
 
 pygame.init()
 
-level = 1
-windowWidth = 1000
-windowHeight = 600
-ballStartPosX = int(windowWidth / 2)
-ballStartPosY = 400
-ballWidth = 10
-ballHeight = 10
-brickWidth = 100
-brickHeight = 50
-white = (255, 255, 255)
-black = (0, 0, 0)
-red = (255, 0, 0)
-green = (0, 255, 0)
-blue = (0, 0, 255)
-brickColor = white
-paddleWidth = 200
-paddleHeight = 25
-paddleVelocity = 5
-upperBoundY = 50
-brickHitCounter = 0
-
-paddleStartingPositionX = int((windowWidth - paddleWidth) / 2)
+paddleStartingPositionX = int((gv.windowWidth - gv.paddleWidth) / 2)
 paddleStartingPositionY = 550
 
-screen = pygame.display.set_mode((windowWidth, windowHeight))
+screen = pygame.display.set_mode((gv.windowWidth, gv.windowHeight))
 pygame.display.set_caption("Breakout")
 
 clock = pygame.time.Clock()
@@ -36,9 +18,9 @@ clock = pygame.time.Clock()
 class Brick(pygame.sprite.Sprite):
     def __init__(self):
         super(Brick, self).__init__()
-        self.image = pygame.Surface((brickWidth, brickHeight))
-        self.image.fill(brickColor)
-        pygame.draw.rect(self.image, brickColor, (brickWidth, brickHeight, 0, 0))
+        self.image = pygame.Surface((gv.brickWidth, gv.brickHeight))
+        self.image.fill(gv.brickColor)
+        pygame.draw.rect(self.image, gv.brickColor, (gv.brickWidth, gv.brickHeight, 0, 0))
 
         self.rect = self.image.get_rect()
 
@@ -55,12 +37,12 @@ class Brick(pygame.sprite.Sprite):
         heightMultiplier = 1
 
         # Space between the left window edge and the bricks
-        brickWidthPadding = 75;
+        brickWidthPadding = 75
 
         for brick in brickObjects:
-            brick.rect.x = brickWidthPadding + (brickCounter * (brickWidth + 10))
+            brick.rect.x = brickWidthPadding + (brickCounter * (gv.brickWidth + 10))
 
-            if brick.rect.x >= windowWidth - brickWidth:
+            if brick.rect.x >= gv.windowWidth - gv.brickWidth:
                 heightMultiplier += 1
                 brickCounter = 0
                 brick.rect.x = brickWidthPadding
@@ -74,30 +56,30 @@ class Brick(pygame.sprite.Sprite):
 class Paddle(pygame.sprite.Sprite):
     def __init__(self):
         super(Paddle, self).__init__()
-        self.image = pygame.Surface((paddleWidth, paddleHeight))
-        self.image.fill(white)
-        self.image.set_colorkey(black)
-        pygame.draw.rect(self.image, white, (0, 0, paddleWidth, paddleHeight))
+        self.image = pygame.Surface((gv.paddleWidth, gv.paddleHeight))
+        self.image.fill(gv.white)
+        self.image.set_colorkey(gv.black)
+        pygame.draw.rect(self.image, gv.white, (0, 0, gv.paddleWidth, gv.paddleHeight))
 
         self.rect = self.image.get_rect()
 
     def moveRight(self):
-        self.rect.x += paddleVelocity
+        self.rect.x += gv.paddleVelocity
 
     def moveLeft(self):
-        self.rect.x -= paddleVelocity
+        self.rect.x -= gv.paddleVelocity
 
 
 class Ball(pygame.sprite.Sprite):
     def __init__(self):
         super(Ball, self).__init__()
-        self.image = pygame.Surface((ballWidth, ballHeight))
-        self.image.fill(green)
-        self.image.set_colorkey(white)
-        pygame.draw.rect(self.image, green, (0, 0, ballWidth, ballHeight))
+        self.image = pygame.Surface((gv.ballWidth, gv.ballHeight))
+        self.image.fill(gv.green)
+        self.image.set_colorkey(gv.white)
+        pygame.draw.rect(self.image, gv.green, (0, 0, gv.ballWidth, gv.ballHeight))
 
         self.rect = self.image.get_rect()
-        self.velocity = [0,0]
+        self.velocity = [0.0, 0.0]
 
     def update(self):
         self.rect.x += self.velocity[0]
@@ -107,12 +89,12 @@ class Ball(pygame.sprite.Sprite):
         self.velocity[1] = -self.velocity[1]
 
     def respawn(self):
-        self.rect.x = ballStartPosX
-        self.rect.y = ballStartPosY
+        self.rect.x = gv.ballStartPosX
+        self.rect.y = gv.ballStartPosY
         self.setVelocity(-2, 2)
 
     def setVelocity(self, lowerBound, upperBound):
-        self.velocity = [randint(lowerBound, upperBound), randint(lowerBound, upperBound)]
+        self.velocity = [random.randint(lowerBound, upperBound), random.randint(lowerBound, upperBound)]
 
         # This is to keep the velocities from being -1, 0, or 1;
         # so that they don't bounce completely vertically or horizontally
@@ -127,11 +109,6 @@ class Ball(pygame.sprite.Sprite):
                 self.velocity[0] = -2
             else:
                 self.velocity[0] = 2
-
-
-
-
-
 
 
 paddle = Paddle()
@@ -149,10 +126,12 @@ bricks = pygame.sprite.Group()
 paddle.rect.x = paddleStartingPositionX
 paddle.rect.y = paddleStartingPositionY
 
-ball.rect.x = ballStartPosX
-ball.rect.y = ballStartPosY
+ball.rect.x = gv.ballStartPosX
+ball.rect.y = gv.ballStartPosY
 
 Brick.spawnBricks(Brick)
+
+font = pygame.font.SysFont("Arial", 32)
 
 # GAME LOOP
 active = True
@@ -161,12 +140,12 @@ while (active):
         if event.type == pygame.QUIT:
             active = False
 
-    screen.fill(black)
+    screen.fill(gv.black)
 
     # KEY ACTIONS
     keys = pygame.key.get_pressed()
 
-    if keys[pygame.K_RIGHT] and paddle.rect.x < (windowWidth - paddleWidth):
+    if keys[pygame.K_RIGHT] and paddle.rect.x < (gv.windowWidth - gv.paddleWidth):
         paddle.moveRight()
     if keys[pygame.K_LEFT] and paddle.rect.x > 0:
         paddle.moveLeft()
@@ -179,35 +158,51 @@ while (active):
 
     if pygame.sprite.spritecollide(ball, bricks, True):
         ball.bounce()
-        brickHitCounter+=1
+        gv.brickHitCounter += 1
+        gv.score += 1
+        print("Brick Hit Counter: " + str(gv.brickHitCounter))
 
-        if brickHitCounter % 24 == 0:
-            level += 1
-            if level == 2:
-                brickColor = red
-            elif level == 3:
-                brickColor == blue
+        if gv.brickHitCounter % 24 == 0:
+            gv.level += 1
+            if gv.level == 2:
+                brickColor = gv.red
+            elif gv.level == 3:
+                brickColor = gv.blue
+            elif gv.level == 4:
+                brickColor = gv.yellow
             else:
-                brickColor = green
+                brickColor = gv.green
 
             Brick.spawnBricks(Brick)
 
     # DRAW AND UPDATE
-    pygame.draw.line(screen, white, (0, upperBoundY), (windowWidth, upperBoundY), 5)
+    pygame.draw.line(screen, gv.white, (0, gv.upperBoundY), (gv.windowWidth, gv.upperBoundY), 5)
     all_sprites_list.draw(screen)
     all_sprites_list.update()
     bricks.draw(screen)
     bricks.update()
     ball.update()
 
-    if ball.rect.y <= upperBoundY or ball.rect.y >= (windowHeight - ballHeight):
+    if ball.rect.y <= gv.upperBoundY or ball.rect.y >= (gv.windowHeight - gv.ballHeight):
         ball.velocity[1] = -ball.velocity[1]
 
-    if ball.rect.x <= 0 or ball.rect.x >= (windowWidth - ballWidth):
+    if ball.rect.x <= 0 or ball.rect.x >= (gv.windowWidth - gv.ballWidth):
         ball.velocity[0] = -ball.velocity[0]
 
-    if ball.rect.y >= (windowHeight-ballHeight):
+    if ball.rect.y >= (gv.windowHeight - gv.ballHeight):
         ball.respawn()
+        gv.lives -= 1
+
+
+    text = font.render("Score: " + str(gv.score), 1, gv.white)
+    screen.blit(text, (15, 7))
+
+    text = font.render("Lives: " + str(gv.lives), 1, gv.white)
+    screen.blit(text, (gv.windowWidth - 150, 7))
+
+    if(gv.lives == 0):
+        gv.score = 0
+        gv.lives = 10
 
     pygame.display.flip()
     clock.tick(60)
